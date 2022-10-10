@@ -7,10 +7,10 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DB_HOST=db
-      - DB_PASSWORD=1234
+      - DB_HOST=localhost
+      - DB_PASSWORD=010420
       - DB=users_database
-      - DB_USER=felipe
+      - DB_USER=bruna
       - SECRET_KEY=7792125bbce085d0b54cd64a7065aef4
     depends_on:
       db:
@@ -24,11 +24,11 @@ services:
     ports:
       - 5431:5432
     environment:
-      - POSTGRES_USER=felipe
-      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=bruna
+      - POSTGRES_PASSWORD=010420
       - POSTGRES_DB=users_database
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U felipe -d users_database"]
+      test: ["CMD-SHELL", "pg_isready -U bruna -d users_database"]
       interval: 10s
       timeout: 5s
       retries: 5
