@@ -16,7 +16,7 @@ const createUserService = async ({ name, email, password, isAdm }: IUserRequest)
   })
 
   if (emailAlreadyExists) {
-    return ["Email already exists", 404]
+    return ["Email already exists", 400]
   }
 
   const newUser = userRepository.create({

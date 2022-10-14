@@ -11,7 +11,7 @@ const createUserController = async (req: Request, res: Response) => {
     const createdUser = await createUserService(user)
 
     if (createdUser instanceof User) {
-      return res.json(instanceToPlain(createdUser))
+      return res.status(201).json(instanceToPlain(createdUser))
     }
 
     return res.status(createdUser[1] as number).json({
