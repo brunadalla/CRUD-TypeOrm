@@ -1,127 +1,48 @@
-# S5-19 | 🏁 Entrega: KImóveis - TypeORM com Relacionamentos
+## CRUD TypeOrm
+Projeto realizado no quarto módulo do curso de **Formação em Desenvolvimento Full Stack da Kenzie Academy Brasil**
 
-Para inciar este projeto, é necessário instalar as dependências, que serão utilizadas nos testes. Portanto utilize o comando abaixo para instalar tais dependências:
-
-````
-yarn install
-````
+O objetivo desse projeto é desenvolver um serviço de back-end responsável por gerenciar um CRUD de usuário utilizando **TypeORM**
 
 
-**Atenção:** é necessário utilizar o `yarn` pois esse projeto foi iniciado com esse gerenciador de pacotes.
+Rotas e suas funcionalidades:
+- **POST /users**
 
-Para verificar se já possui o gerenciador yarn instalado utilize o seguinte comando:
+Rota para criação de usuário com os seguintes dados:
+1. name: string;
+2. email: string;
+3. password: uma string que armazena uma hash gerada com a biblioteca bcrypt;
+4. isAdm: boolean;
+5. isActive: é gerado no momento da validação dos dados no formato boolean com o valor default igual a true;
+6. createdAt: é gerado apenas no momento da validação dos dados ;
+7. updatedAt: é gerado apenas no momento da validação dos dados, na qual o usuário é atualizado, e inicia com o valor de criação;
+8. id: um uuidv4 gerado no momento da validação dos dados.
 
-````
-yarn --version
-````
+A rota de criação retorna todos os dados, com exceção da hash de senha.
+Não é possível cadastrar dois usuário com o mesmo e-mail.
 
-Caso não possua o yarn instalado, utilize o comando abaixo para instalar globalmente na sua máquina:
+- **POST /login** 
 
-````
-npm install --global yarn
-````
-<br>
+Rota de login recebendo email e password. 
+O login valida se o usuário existe e se a senha está correta. 
 
-# Como alternar entre docker e localhost
+A rota de login retorna um token JWT válido por 24h caso todas as validações passem.
 
-Essa entrega já está com o Docker configurado e pronto para uso
+- **GET /users** 
 
-Basta buildar e subir nossos containers usando o comando padrão:
-````
-docker-compose up --build
-````
-
-ou
-````
-docker compose up --build
-````
-O comando pode variar com a versão do docker compose instalada em sua máquina
-
-***ATENÇÃO:*** a porta utilizada para rodar nosso docker é a `5431`.
-Caso tenha algum problema com essa porta, basta alterá-la no docker-compose.yml.
-
-<br>
-
-## **Mas caso você necessite executar a entrega em `localhost`**
-**Configure as variáveis de ambiente no seu .env**, passando as credenciais corretas para conectar em seu banco local
-
-E altere a variável **`DB_HOST`** para **`localhost`**
-
-Com isso feito, para rodar sua aplicação, basta utilizar o comando
-````
-yarn dev
-````
-
-<br>
-
-# **Sobre os testes**
-
-Essa aplicação possui testes, que serão utilizados para validar, se todas as regras de negócio foram aplicadas de maneira correta.
-
-Os testes estão localizados em `src/__tests__`.
-
-Na subpasta `integration` estão os testes.
-
-Já na subpasta `mocks` estão os dados que serão utilizados para os testes.
-
-No arquivo `jest.config.json` estão algumas configurações necessárias para os testes rodarem.
-
-**`De modo algum altere qualquer um desses arquivos.`** Isso poderá comprometer a integridade dos testes.
-
-E também não altere o script de `test` localizado no `package.json`. Isso será utilizado para rodar os testes.
-
-<br>
+A rota de listagem de usuários retorna todos os dados dos usuários, com exceção dos hashs de senha. 
+Está rota está protegida por um middleware de validação do token JWT e um middleware para checar se o usuário logado é um administrador. Ela só pode ser acessada por usuários que sejam administradores.
 
 
-# **Rodando os testes** 
+- **PATCH	/users/<id>** 
 
-Para rodar os testes é necessário que no seu terminal, você esteja dentro do diretório do projeto.
+A rota de atualização de usuário é capaz de atualizar tanto um quanto todos os dados de um usuário. Está rota está protegida por um middleware de validação do token JWT e um middleware para checar se o usuário logado é um administrador. Apenas administradores podem atualizar qualquer usuário, usuários não-administradores podem apenas atualizar seu próprio perfil.
 
-Estando no terminal e dentro do caminho correto, você poderá utilizar os comandos a seguir:
+Os campos id, isAdm e isActive não podem ser atualizados.
+ 
+Essa rota retorna os dados atualizados do usuário.
 
-### Rodar todos os testes
-````
-yarn test
-````
-#
-### Rodar todos os testes e ter um log ainda mais completo
-````
-yarn test --all
-````
-#
+- **DELETE /users/<id>** 
 
-### Rodar os testes de uma pasta específica
-`detalhe: repare que tests está envolvido por 2 underlines. Isso se chama dunder.`
-````
-yarn test ./scr/__tests__/integration/<subpasta>
-````
-#
-### Rodar os testes de um arquivo específico
-````
-yarn test ./scr/__tests__/integration/<subpasta>/<arquivo>
-````
-#
-### Rodar um teste específico
-````
-yarn test -t <describe ou test específico envolto em aspas>
-````
-````
-\\ ex: yarn test -t "/categories"
-\\ rodaria os testes do describe "/categorias" no caminho
-\\ ./scr/__tests__/integration/categories/categoriesRoutes.test.ts
-````
+A rota realiza um soft delete do usuário, alterando isActive para false. Está rota está protegida por um middleware de validação do token JWT e um middleware para checar se o usuário logado é um administrador. Apenas administradores podem excluir qualquer usuário, usuários não-administradores podem apenas excluir seu próprio usuário.
 
-<br>
-
-
-**Caso você queira verificar todas as opções de execução de testes, visite a [Documentação oficial do Jest](https://jestjs.io/docs/cli)**
-
-Após rodar um dos comandos aparecerá um log no seu terminal, contendo as informações da execução do teste.
-
-**Observação:** O teste pode demorar alguns segundos para ser finalizado. Quanto maior for o teste, mais tempo será consumido para a execução.
-
-#
-
-
-
-### Agora que já sabe como iniciar o seu projeto e rodar os testes, é hora de colocar a mão no código!
+Não é possível realizar um soft delete um usuário inativo.
